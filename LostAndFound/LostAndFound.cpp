@@ -3,6 +3,7 @@
 void encode();
 void decode();
 bool isVowel(char c);
+std::string reverse(std::string word, int length);
 
 int main(){
     int choice;
@@ -22,6 +23,7 @@ int main(){
     return 0;
 }
 
+// membuat sandi
 void encode(){
     std::string word;
     std::string newWord;
@@ -29,30 +31,24 @@ void encode(){
     std::cin >> word;
 
     // konversi ascii huruf pertama
-    int ASCII = (int)word[0];
+    int ascii = (int)word[0];
 
     // panjang string 
-    int length = word.size();
     int j = 0;
 
-    for (int i = 0; i < length; i++){
+    // menghilangkan huruf vokal
+    for (int i = 0; i < word.size(); i++){
         if(!isVowel(word[i])){
-             newWord.push_back(word[i]);
+            newWord.push_back(word[i]);
         }
     }
-    
-    length = newWord.size();
 
     // fungsi reverse
-    for (int i = 0;  i < length/2; i++){
-        char temp = newWord[i];
-        newWord[i] = newWord[length - i - 1];
-        newWord[length - i - 1] = temp; 
-    }
+    newWord = reverse(newWord, newWord.size());
 
     // insert ascii di tengah 
-    int mid = length/2;
-    newWord.insert(mid, std::to_string(ASCII));
+    int mid = newWord.size()/2;
+    newWord.insert(mid, std::to_string(ascii));
     std::cout << newWord;
 }
 
@@ -61,16 +57,48 @@ void decode(){
     std::cout << "insert kata: ";
     std::cin >> word;
 
-    int length = word.size();
+    // tentukan letak integer
+    int start = -1;
+    int end = -1;
+    for (int i = 0; i < word.size(); i++){
+        if (isdigit(word[i])){
+            if (start == -1){
+                start = i;
+            } 
+            end = i;
+        }
+    }
+    
+    // ambil dan konversi ascii
+    std::string asciiStr = word.substr(start, end - start + 1);
+    int asciiVal = std::stoi(asciiStr);
+    char firstChar = (char)asciiVal;
 
+    // hapus angka dari kata
+    word.erase(start, end - start + 1);
+
+    // fungsi reverse
+    word = reverse(word, word.size());
+
+    if (word[0] == firstChar){
+        std::cout << word;
+    }
+    else{
+        std::cout << firstChar << word  ;
+    }
+}
+
+// fungsi reverse
+std::string reverse(std::string word, int length){
     for (int i = 0;  i < length/2; i++){
         char temp = word[i];
         word[i] = word[length - i - 1];
         word[length - i - 1] = temp; 
     }
-
+    return word;
 }
 
+// cek huruf vokal atau bukan
 bool isVowel(char c) {
     char vowels[] = "aeiouAEIOU"; 
     for (int i = 0; vowels[i] != '\0'; i++) {
